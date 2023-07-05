@@ -20,10 +20,6 @@ public class Main {
         for (String s : args) {
             try {
                 d = Double.parseDouble(s);
-                d = Math.round(d * 100) / 100.0; // Round to two decimal places
-                if (d < 0.01) {
-                    throw new NumberFormatException();
-                }
             } catch (NumberFormatException e) {
                 System.err.println("Błędny argument: " + s);
                 System.err.println("Przerywam działanie. Argumenty muszą być dodatnimi liczbami zmiennoprzecinkowymi >= 0.01");
