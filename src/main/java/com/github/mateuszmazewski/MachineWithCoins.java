@@ -36,6 +36,15 @@ public class MachineWithCoins {
         }
     }
 
+    /**
+     * @param change change to be given. It is rounded to two decimal places. Has to be >= 0.01.
+     * @return Optional describing the array of integers that shows how many coins of each type should be used
+     * in order to give change using the minimum number of coins or an empty Optional if the change cannot be given
+     * using current limits.
+     * @throws IllegalArgumentException if change is not a positive number.
+     * @implNote Uses dynamic programming technique. Number of coins of each type is limited
+     * and updated over subsequent calls.
+     */
     public Optional<int[]> getChange(double change) {
         change = roundToTwoDecimalPlaces(change);
         if (change < 0.01) {
