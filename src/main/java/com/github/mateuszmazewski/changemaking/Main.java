@@ -40,9 +40,7 @@ public class Main {
             d = Double.parseDouble(change);
         } catch (NumberFormatException e) {
             System.out.println("Błędny argument: " + change);
-            if (!isInteractive) {
-                System.out.println("Przerywam działanie. Argumenty muszą być dodatnimi liczbami zmiennoprzecinkowymi >= 0.01");
-            }
+            exitIfNotInteractive(isInteractive);
             return;
         }
 
@@ -50,6 +48,7 @@ public class Main {
             result = machine.getChange(d);
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
+            exitIfNotInteractive(isInteractive);
             return;
         }
         System.out.println("Dla reszty " + MachineWithCoins.roundToTwoDecimalPlaces(d) + " zł:");
@@ -59,6 +58,13 @@ public class Main {
             System.out.println("Nie można wydać reszty");
         }
         System.out.println();
+    }
+
+    private static void exitIfNotInteractive(boolean isInteractive) {
+        if (!isInteractive) {
+            System.out.println("Przerywam działanie.");
+            System.exit(-1);
+        }
     }
 
     private static void printResult(int[] usedCoins, int[] coins) {

@@ -48,7 +48,7 @@ public class MachineWithCoins {
     public Optional<int[]> getChange(double change) {
         change = roundToTwoDecimalPlaces(change);
         if (change < 0.01) {
-            throw new IllegalArgumentException("Kwota musi być dodatnią liczbą zmiennoprzecinkową >= 0.01");
+            throw new IllegalArgumentException("Błędna kwota: " + change + ". Kwota musi być dodatnią liczbą zmiennoprzecinkową >= 0.01");
         }
         int targetAmount = (int) (change * 100);
 
