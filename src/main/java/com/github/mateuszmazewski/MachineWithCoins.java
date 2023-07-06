@@ -37,7 +37,7 @@ public class MachineWithCoins {
     }
 
     public Optional<int[]> getChange(double change) {
-        change = Math.round(change * 100) / 100.0; // Round to two decimal places
+        change = roundToTwoDecimalPlaces(change);
         if (change < 0.01) {
             throw new IllegalArgumentException("Kwota musi być dodatnią liczbą zmiennoprzecinkową >= 0.01");
         }
@@ -72,6 +72,10 @@ public class MachineWithCoins {
             }
             return Optional.of(usedCoins[targetAmount]);
         }
+    }
+
+    public static double roundToTwoDecimalPlaces(double d) {
+        return Math.round(d * 100) / 100.0;
     }
 
     public int[] getLimits() {

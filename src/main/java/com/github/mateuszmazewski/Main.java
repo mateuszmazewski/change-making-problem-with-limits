@@ -1,41 +1,64 @@
 package com.github.mateuszmazewski;
 
 import java.util.Optional;
+import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) {
-        if (args.length == 0) {
-            System.err.println("Nie podano argumentów. Przerywam działanie. " +
-                    "Argumenty muszą być dodatnimi liczbami zmiennoprzecinkowymi >= 0.01");
-            return;
-        }
+    private final int[] coins = {500, 200, 100, 50, 20, 10, 5, 2, 1};
+    private final int[] limits = new int[]{1, 3, 5, 10, 20, 200, 100, 100, 10000};
+    private final MachineWithCoins machine = new MachineWithCoins(coins, limits);
 
-        int[] coins = {500, 200, 100, 50, 20, 10, 5, 2, 1};
-        int[] limits = new int[]{1, 3, 5, 10, 20, 200, 100, 100, 10000};
-        MachineWithCoins machine = new MachineWithCoins(coins, limits);
+    public static void main(String[] args) {
+        Main main = new Main();
+        boolean isInteractive = args.length == 0;
+
+        if (!isInteractive) {
+            for (String s : args) {
+                main.getChange(s, false);
+            }
+        } else {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Nie podano argumentów wywołania. " +
+                    "Uruchamiam tryb interaktywny.\n[Wyjście - q]");
+            while (true) {
+                System.out.print("Podaj resztę: ");
+                String s = scanner.next();
+                if (s.equals("q")) {
+                    return;
+                }
+                main.getChange(s, true);
+            }
+        }
+    }
+
+    private void getChange(String change, boolean isInteractive) {
         Optional<int[]> result;
         double d;
 
-        for (String s : args) {
-            try {
-                d = Double.parseDouble(s);
-            } catch (NumberFormatException e) {
-                System.err.println("Błędny argument: " + s);
-                System.err.println("Przerywam działanie. Argumenty muszą być dodatnimi liczbami zmiennoprzecinkowymi >= 0.01");
-                return;
+        try {
+            d = Double.parseDouble(change);
+        } catch (NumberFormatException e) {
+            System.out.println("Błędny argument: " + change);
+            if (!isInteractive) {
+                System.out.println("Przerywam działanie. Argumenty muszą być dodatnimi liczbami zmiennoprzecinkowymi >= 0.01");
             }
-
-            result = machine.getChange(d);
-            System.out.println("Dla reszty " + d + " zł:");
-            if (result.isPresent()) {
-                printResult(result.get(), coins);
-            } else {
-                System.out.println("Nie można wydać reszty");
-            }
-            System.out.println();
+            return;
         }
 
+        try {
+            result = machine.getChange(d);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+        System.out.println("Dla reszty " + MachineWithCoins.roundToTwoDecimalPlaces(d) + " zł:");
+        if (result.isPresent()) {
+            printResult(result.get(), coins);
+        } else {
+            System.out.println("Nie można wydać reszty");
+        }
+        System.out.println();
     }
 
     private static void printResult(int[] usedCoins, int[] coins) {
