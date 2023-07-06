@@ -1,4 +1,4 @@
-package com.github.mateuszmazewski;
+package com.github.mateuszmazewski.changemaking;
 
 import java.util.Arrays;
 import java.util.Optional;

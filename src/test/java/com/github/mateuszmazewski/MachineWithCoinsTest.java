@@ -1,5 +1,6 @@
 package com.github.mateuszmazewski;
 
+import com.github.mateuszmazewski.changemaking.MachineWithCoins;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
