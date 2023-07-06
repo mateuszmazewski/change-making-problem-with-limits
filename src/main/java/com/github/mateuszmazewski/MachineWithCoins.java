@@ -51,20 +51,32 @@ public class MachineWithCoins {
             throw new IllegalArgumentException("Kwota musi być dodatnią liczbą zmiennoprzecinkową >= 0.01");
         }
         int targetAmount = (int) (change * 100);
+
+        /*
+        usedCoins array = necessary coins to give every possible amount from 0 to targetAmount;
+        we reuse already saved values to check when more coins are needed:
+        give amount x VS give amount (x - coin value) and additionally use that coin
+         */
         int[][] usedCoins = new int[targetAmount + 1][coins.length];
-        int[] howManyCoinsNeeded = new int[targetAmount + 1];
-        Arrays.fill(howManyCoinsNeeded, 1, targetAmount + 1, MAX);
         for (int[] row : usedCoins) {
             Arrays.fill(row, 0);
         }
+
+        // currently known number of coins needed to give each amount from 0 to targetAmount
+        int[] howManyCoinsNeeded = new int[targetAmount + 1];
+        howManyCoinsNeeded[0] = 0; // To give change 0, we need 0 coins
+        Arrays.fill(howManyCoinsNeeded, 1, targetAmount + 1, MAX);
+
         int[] limitsCopy = Arrays.copyOf(limits, limits.length);
 
         for (int coinIdx = 0; coinIdx < coins.length; coinIdx++) {
             while (limitsCopy[coinIdx] > 0) {
                 for (int amount = targetAmount; amount >= 0; amount--) {
                     int newAmount = amount + coins[coinIdx];
+                    // Check if it is better to use current coin and give the remaining change
                     if (newAmount <= targetAmount && howManyCoinsNeeded[amount] + 1 < howManyCoinsNeeded[newAmount]) {
                         howManyCoinsNeeded[newAmount] = howManyCoinsNeeded[amount] + 1;
+                        // Use current coin + the same coins that we would use to give the remaining change
                         usedCoins[newAmount] = Arrays.copyOf(usedCoins[amount], coins.length);
                         usedCoins[newAmount][coinIdx]++;
                     }
@@ -73,13 +85,17 @@ public class MachineWithCoins {
             }
         }
 
-        if (howManyCoinsNeeded[targetAmount] == MAX) {
-            return Optional.empty();
-        } else {
-            for (int coinIdx = 0; coinIdx < limits.length; coinIdx++) {
-                limits[coinIdx] -= usedCoins[targetAmount][coinIdx];
-            }
-            return Optional.of(usedCoins[targetAmount]);
+        boolean isSolutionFound = howManyCoinsNeeded[targetAmount] != MAX;
+        if (isSolutionFound) {
+            updateLimits(usedCoins[targetAmount]);
+        }
+
+        return isSolutionFound ? Optional.of(usedCoins[targetAmount]) : Optional.empty();
+    }
+
+    private void updateLimits(int[] usedCoins) {
+        for (int coinIdx = 0; coinIdx < coins.length; coinIdx++) {
+            limits[coinIdx] -= usedCoins[coinIdx];
         }
     }
 
